@@ -162,7 +162,9 @@ class GoalFunction(ReprMixin, ABC):
         i = 0
         while i < len(inputs):
             batch = inputs[i : i + self.batch_size]
-            batch_preds = self.model(batch)
+            tokenized_batch = self.model.tokenizer(batch, return_tensors="pt", padding=True)
+            tokenized_batch = tokenized_batch["input_ids"]
+            batch_preds = self.model.model.generate(tokenized_batch)
 
             # Some seq-to-seq models will return a single string as a prediction
             # for a single-string list. Wrap these in a list.

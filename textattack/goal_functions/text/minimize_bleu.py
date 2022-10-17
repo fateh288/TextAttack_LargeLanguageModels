@@ -8,7 +8,7 @@ Goal Function for Attempts to minimize the BLEU score
 import functools
 
 import nltk
-
+import evaluate
 import textattack
 
 from .text_to_text_goal_function import TextToTextGoalFunction
@@ -60,8 +60,13 @@ class MinimizeBleu(TextToTextGoalFunction):
 
 
 @functools.lru_cache(maxsize=2**12)
-def get_bleu(a, b):
-    ref = a.words
-    hyp = b.words
-    bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
-    return bleu_score
+def get_bleu(model_output, ground_truth):
+    hyp = model_output.words
+    ref = ground_truth.words
+    ref = [" ".join(ref)]
+    hyp = [" ".join(hyp)]
+    rouge = evaluate.load('rouge')
+    rouge_score = rouge.compute(predictions=hyp, references=ref).get('rougeL')
+    # bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
+    return rouge_score
+

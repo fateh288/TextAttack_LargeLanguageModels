@@ -54,7 +54,7 @@ class WordSwapInflections(WordSwap):
 
     def _get_replacement_words(self, word, word_part_of_speech):
         # only nouns, verbs, and adjectives are considered for replacement
-        if word_part_of_speech not in self._enptb_to_universal:
+        if word_part_of_speech not in self._enptb_to_universal.values():
             return []
 
         # gets a dict that maps part-of-speech (POS) to available lemmas
@@ -65,7 +65,7 @@ class WordSwapInflections(WordSwap):
             return []
 
         # map the fine-grained POS to a universal POS
-        lemminflect_pos = self._enptb_to_universal[word_part_of_speech]
+        lemminflect_pos = word_part_of_speech #self._enptb_to_universal[word_part_of_speech]
 
         # choose lemma with same POS, if ones exists; otherwise, choose lemma randomly
         if lemminflect_pos in replacement_inflections_dict:

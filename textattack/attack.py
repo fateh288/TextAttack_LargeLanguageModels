@@ -23,6 +23,7 @@ from textattack.models.wrappers import ModelWrapper
 from textattack.search_methods import SearchMethod
 from textattack.shared import AttackedText, utils
 from textattack.transformations import CompositeTransformation, Transformation
+from transformers import FlaxElectraForSequenceClassification
 
 
 class Attack:
@@ -134,13 +135,13 @@ class Attack:
         if not self.transformation.deterministic:
             self.use_transformation_cache = False
         elif isinstance(self.transformation, CompositeTransformation):
-            self.use_transformation_cache = True
+            self.use_transformation_cache = False
             for t in self.transformation.transformations:
                 if not t.deterministic:
                     self.use_transformation_cache = False
                     break
         else:
-            self.use_transformation_cache = True
+            self.use_transformation_cache = FlaxElectraForSequenceClassification
         self.transformation_cache_size = transformation_cache_size
         self.transformation_cache = lru.LRU(transformation_cache_size)
 
@@ -442,6 +443,7 @@ class Attack:
         goal_function_result, _ = self.goal_function.init_attack_example(
             example, ground_truth_output
         )
+
         if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
             return SkippedAttackResult(goal_function_result)
         else:
