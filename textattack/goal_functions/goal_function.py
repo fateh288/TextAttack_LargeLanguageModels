@@ -164,6 +164,8 @@ class GoalFunction(ReprMixin, ABC):
             batch = inputs[i : i + self.batch_size]
             tokenized_batch = self.model.tokenizer(batch, return_tensors="pt", padding=True)
             tokenized_batch = tokenized_batch["input_ids"]
+            if torch.cuda.is_available():
+              tokenized_batch = tokenized_batch.cuda()
             batch_preds = self.model.model.generate(tokenized_batch)
 
             # Some seq-to-seq models will return a single string as a prediction

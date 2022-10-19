@@ -66,7 +66,7 @@ def get_bleu(model_output, ground_truth):
     ref = [" ".join(ref)]
     hyp = [" ".join(hyp)]
     rouge = evaluate.load('rouge')
-    rouge_score = rouge.compute(predictions=hyp, references=ref).get('rougeL')
+    rouge_score = rouge.compute(predictions=hyp, references=ref,use_stemmer=True).get('rougeL')
     # bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
     return rouge_score
 
