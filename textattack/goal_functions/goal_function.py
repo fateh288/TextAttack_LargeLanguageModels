@@ -167,22 +167,9 @@ class GoalFunction(ReprMixin, ABC):
             if torch.cuda.is_available():
               tokenized_batch = tokenized_batch.cuda()
             batch_preds = self.model.model.generate(tokenized_batch)
+            processed_outputs = self._process_model_outputs(batch, batch_preds)
+            outputs.extend(processed_outputs)
 
-            # Some seq-to-seq models will return a single string as a prediction
-            # for a single-string list. Wrap these in a list.
-            if isinstance(batch_preds, str):
-                batch_preds = [batch_preds]
-
-            # Get PyTorch tensors off of other devices.
-            if isinstance(batch_preds, torch.Tensor):
-                batch_preds = batch_preds.cpu()
-
-            if isinstance(batch_preds, list):
-                outputs.extend(batch_preds)
-            elif isinstance(batch_preds, np.ndarray):
-                outputs.append(torch.tensor(batch_preds))
-            else:
-                outputs.append(batch_preds)
             i += self.batch_size
 
         if isinstance(outputs[0], torch.Tensor):
@@ -192,7 +179,7 @@ class GoalFunction(ReprMixin, ABC):
             outputs
         ), f"Got {len(outputs)} outputs for {len(inputs)} inputs"
 
-        return self._process_model_outputs(attacked_text_list, outputs)
+        return outputs
 
     def _call_model(self, attacked_text_list):
         """Gets predictions for a list of ``AttackedText`` objects.
