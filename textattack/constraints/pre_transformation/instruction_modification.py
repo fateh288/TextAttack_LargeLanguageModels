@@ -58,15 +58,20 @@ class InstructionModification(PreTransformationConstraint):
             print("No task input found in the text or error occured")
         try:
             if self.modify_explanation:
-                text_input_parts = ''.join(new_text_input.split('Positive Examples:'))
-                explanation_list = text_input_parts.split('Explanation:')[1:]
-                #last_explanation = explanations[-1].split('Input:')[0]
-                #explanation_list = explanations[1:-1] + [last_explanation]
-                for exp in explanation_list:
-                    exp_text = exp.split('Input:')[0]
-                    found_indexes = self._get_word_index_range(new_text_input, exp_text)
-                    word_index_range = list(range(found_indexes[0], found_indexes[1]))
-                    modifiable_indices.update(word_index_range)
+                text_input_parts = new_text_input.split('Positive Examples:')
+                for text_input in text_input_parts:
+                    explanation_list = text_input.split('Explanation:')[1:]
+                    #last_explanation = explanations[-1].split('Input:')[0]
+                    #explanation_list = explanations[1:-1] + [last_explanation]
+
+                    for exp in explanation_list:
+                        if "Input:" in exp:
+                            exp_text = exp.split('Input:')[0]
+                        else:
+                            exp_text = exp
+                        found_indexes = self._get_word_index_range(new_text_input, exp_text)
+                        word_index_range = list(range(found_indexes[0], found_indexes[1]))
+                        modifiable_indices.update(word_index_range)
         except:
             print("No explanations found in the text or error occured")
         return modifiable_indices
