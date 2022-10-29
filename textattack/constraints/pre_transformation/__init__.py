@@ -12,3 +12,4 @@ from .max_word_index_modification import MaxWordIndexModification
 from .max_num_words_modified import MaxNumWordsModified
 from .min_word_length import MinWordLength
 from .max_modification_rate import MaxModificationRate
+from .instruction_modification import InstructionModification
