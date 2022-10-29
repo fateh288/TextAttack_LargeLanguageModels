@@ -59,11 +59,12 @@ class InstructionModification(PreTransformationConstraint):
         try:
             if self.modify_explanation:
                 text_input_parts = ''.join(new_text_input.split('Positive Examples:'))
-                explanations = text_input_parts.split('Explanation:')
-                last_explanation = explanations[-1].split('Input:')[0]
-                explanation_list = explanations[1:-1] + [last_explanation]
+                explanation_list = text_input_parts.split('Explanation:')[1:]
+                #last_explanation = explanations[-1].split('Input:')[0]
+                #explanation_list = explanations[1:-1] + [last_explanation]
                 for exp in explanation_list:
-                    found_indexes = self._get_word_index_range(new_text_input, exp)
+                    exp_text = exp.split('Input:')[0]
+                    found_indexes = self._get_word_index_range(new_text_input, exp_text)
                     word_index_range = list(range(found_indexes[0], found_indexes[1]))
                     modifiable_indices.update(word_index_range)
         except:
