@@ -58,7 +58,8 @@ class InstructionModification(PreTransformationConstraint):
             print("No task input found in the text or error occured")
         try:
             if self.modify_explanation:
-                explanations = new_text_input.split('Explanation:')
+                text_input_parts = ''.join(new_text_input.split('Positive Examples:'))
+                explanations = text_input_parts.split('Explanation:')
                 last_explanation = explanations[-1].split('Input:')[0]
                 explanation_list = explanations[1:-1] + [last_explanation]
                 for exp in explanation_list:
